@@ -6,6 +6,9 @@ from transformers import AutoModel
 from sklearn.metrics import accuracy_score
 
 
+# pl.LightningModule has all functionality of a vanilla torch.nn.Module, 
+# with added functionality of separating out the ML engineering code
+
 class ColaModel(pl.LightningModule):
     def __init__(self, model_name="google/bert_uncased_L-2_H-128_A-2", lr=1e-2):
         super(ColaModel, self).__init__()
@@ -22,7 +25,7 @@ class ColaModel(pl.LightningModule):
         logits = self.W(h_cls)
         return logits
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch, batch_idx): # no need to weight updates
         logits = self.forward(batch["input_ids"], batch["attention_mask"])
         loss = F.cross_entropy(logits, batch["label"])
         self.log("train_loss", loss, prog_bar=True)
